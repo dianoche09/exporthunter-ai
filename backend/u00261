@@ -1,0 +1,7 @@
+npm error Lifecycle script `build` failed with error:
+npm error code 2
+npm error path /Users/gurkankuzu/GK MAC D/dev/exporthunter/exporthunter-ai/backend
+npm error workspace exporthunter-backend@1.0.0
+npm error location /Users/gurkankuzu/GK MAC D/dev/exporthunter/exporthunter-ai/backend
+npm error command failed
+npm error command sh -c tsc
