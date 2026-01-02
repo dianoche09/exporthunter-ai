@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import { Plus, Send, BarChart3, Mail, Calendar, ArrowRight, PauseCircle, PlayCircle, MoreVertical, Trash2, ChevronUp, ChevronDown, Wand2, TrendingUp, Bot, Sparkles, Target, Zap, Activity, Globe, Shield, MessageCircle, GitBranch, TestTube, MousePointer2, AlertTriangle } from 'lucide-react'
 import { campaignsAPI } from '../services/api'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -8,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
 
 export default function CampaignsPage() {
+  const navigate = useNavigate()
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [magicInput, setMagicInput] = useState('')
   const [isProcessingMagic, setIsProcessingMagic] = useState(false)
@@ -58,6 +60,13 @@ export default function CampaignsPage() {
   })
 
   const campaigns = data?.data?.campaigns || []
+
+  // Calculate dynamic stats
+  const avgOpenRate = Math.round(
+    campaigns.length > 0
+      ? campaigns.reduce((acc: number, c: any) => acc + (c.stats?.openRate || 0), 0) / campaigns.length
+      : 0
+  );
 
   if (isLoading) {
     return (
@@ -180,7 +189,7 @@ export default function CampaignsPage() {
                     <div className="flex-shrink-0">
                       <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 text-center">
                         <Target className="w-8 h-8 mx-auto mb-2 text-yellow-300" />
-                        <div className="text-5xl font-black">45%</div>
+                        <div className="text-5xl font-black">{avgOpenRate}%</div>
                         <div className="text-sm text-blue-200 font-bold mt-1">Avg. Open Rate</div>
                       </div>
                     </div>
@@ -361,7 +370,7 @@ export default function CampaignsPage() {
                               Open Rate <TrendingUp className="w-3 h-3 text-green-500" />
                             </p>
                             <p className="text-xl font-black text-slate-900">
-                              {campaign.stats.openRate || 45}%
+                              {campaign.stats?.openRate || 0}%
                             </p>
                           </div>
                           <div className="text-center p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
@@ -369,7 +378,7 @@ export default function CampaignsPage() {
                               Click Rate <TrendingUp className="w-3 h-3 text-green-500" />
                             </p>
                             <p className="text-xl font-black text-slate-900">
-                              {campaign.stats.clickRate || 12}%
+                              {campaign.stats?.clickRate || 0}%
                             </p>
                           </div>
                         </div>
@@ -397,7 +406,7 @@ export default function CampaignsPage() {
                       ) : (
                         <>
                           <button
-                            onClick={() => window.location.href = `/campaigns/${campaign._id}`}
+                            onClick={() => navigate(`/campaigns/${campaign._id}`)}
                             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:shadow-lg hover:shadow-purple-500/30 text-xs font-black transition-all transform hover:scale-105"
                           >
                             <Sparkles className="w-3 h-3" />

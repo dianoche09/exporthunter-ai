@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     ArrowLeft, Globe, ShieldCheck, Activity, Zap, Play, Pause,
@@ -7,27 +8,42 @@ import {
     Mail, Clock, CheckCircle2, ChevronRight, AlertTriangle, Send, Bot,
     Sparkles, Search, MoreVertical, ThumbsUp, ThumbsDown
 } from 'lucide-react'
+import { campaignsAPI } from '../services/api'
+import LoadingSpinner from '../components/LoadingSpinner'
 
-// Mock Data
-const campaignData = {
-    id: '1',
-    name: 'CEO Outreach - Dubai Expansion',
-    status: 'active',
-    health: 98,
-    currentRegion: 'USA (East Coast)',
-    currentTime: '09:42 AM',
-    stats: {
-        sent: 1240,
-        openRate: 68,
-        replyRate: 12,
-        meetings: 8
-    }
-}
 
 export default function CampaignDetailsPage() {
     const { id } = useParams()
     const navigate = useNavigate()
     const [activeTab, setActiveTab] = useState<'flow' | 'inbox' | 'lab'>('flow')
+
+    const { data: campaignResponse, isLoading } = useQuery({
+        queryKey: ['campaign', id],
+        queryFn: () => campaignsAPI.getCampaign(id!),
+        enabled: !!id
+    })
+
+    const campaign = campaignResponse?.data
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-screen bg-slate-50">
+                <LoadingSpinner size="lg" />
+            </div>
+        )
+    }
+
+    if (!campaign) {
+        return (
+            <div className="flex flex-col items-center justify-center h-screen bg-slate-50">
+                <AlertTriangle className="w-12 h-12 text-amber-500 mb-4" />
+                <h2 className="text-xl font-bold">Campaign not found</h2>
+                <button onClick={() => navigate('/campaigns')} className="mt-4 text-blue-600 font-bold hover:underline">
+                    Back to Campaigns
+                </button>
+            </div>
+        )
+    }
 
     return (
         <div className="p-8 max-w-[1600px] mx-auto bg-slate-50 min-h-screen font-outfit">
@@ -67,7 +83,7 @@ export default function CampaignDetailsPage() {
                                     <Clock className="w-4 h-4" /> Started 2 days ago
                                 </span>
                             </div>
-                            <h1 className="text-4xl font-black text-slate-900 mb-2">{campaignData.name}</h1>
+                            <h1 className="text-4xl font-black text-slate-900 mb-2">{campaign.name}</h1>
                             <div className="flex items-center gap-2 text-slate-500 font-medium">
                                 Targeting <span className="text-blue-600 font-bold">Manufacturing CEOs</span> in <span className="text-blue-600 font-bold">Dubai & DACH</span>
                             </div>
@@ -92,7 +108,7 @@ export default function CampaignDetailsPage() {
                                     </div>
                                     <div className="text-2xl font-black mb-1">Warning Up...</div>
                                     <div className="text-xs text-slate-400 font-medium leading-relaxed">
-                                        Sending to <span className="text-white font-bold">{campaignData.currentRegion}</span>.
+                                        Sending to <span className="text-white font-bold">Optimal Region</span>.
                                         <br />
                                         Waiting for Tokyo to wake up (3h left).
                                     </div>
@@ -108,7 +124,7 @@ export default function CampaignDetailsPage() {
                                     <Activity className="w-4 h-4 text-green-500" />
                                 </div>
                                 <div className="flex items-end gap-2 mb-1">
-                                    <span className="text-4xl font-black text-slate-900">{campaignData.health}%</span>
+                                    <span className="text-4xl font-black text-slate-900">98%</span>
                                     <span className="text-sm font-bold text-green-600 mb-1">Excellent</span>
                                 </div>
                                 <div className="text-xs text-slate-500 font-medium">
@@ -160,7 +176,7 @@ export default function CampaignDetailsPage() {
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.2 }}
                     >
-                        {activeTab === 'flow' && <FlowView />}
+                        {activeTab === 'flow' && <FlowView stats={campaign.stats} />}
                         {activeTab === 'inbox' && <InboxView />}
                         {activeTab === 'lab' && <LabView />}
                     </motion.div>
@@ -194,7 +210,7 @@ function TabButton({ active, onClick, icon: Icon, label, badge }: any) {
     )
 }
 
-function FlowView() {
+function FlowView({ stats }: any) {
     return (
         <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-200">
             <div className="flex flex-col lg:flex-row gap-12">
@@ -207,8 +223,8 @@ function FlowView() {
                         title="Initial Outreach"
                         time="Day 1"
                         status="completed"
-                        description="AI generated 1,204 unique variations based on LinkedIn profiles."
-                        stats={{ sent: 1240, open: '68%' }}
+                        description="AI generated unique variations for all your recipients."
+                        stats={{ sent: stats?.sentCount || 0, open: `${stats?.openRate || 0}%` }}
                     />
 
                     {/* Step 2 */}
