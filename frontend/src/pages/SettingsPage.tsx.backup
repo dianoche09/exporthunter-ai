@@ -358,8 +358,8 @@ export default function SettingsPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-6 py-4 rounded-2xl font-bold transition-all whitespace-nowrap ${activeTab === tab.id
-                ? 'bg-white text-violet-600 shadow-lg scale-105 border border-violet-100'
-                : 'bg-white/50 text-slate-500 hover:bg-white hover:text-slate-700'
+                  ? 'bg-white text-violet-600 shadow-lg scale-105 border border-violet-100'
+                  : 'bg-white/50 text-slate-500 hover:bg-white hover:text-slate-700'
                 }`}
             >
               <tab.icon className="w-5 h-5" />
@@ -458,8 +458,8 @@ export default function SettingsPage() {
                               key={tone}
                               onClick={() => setFormData({ ...formData, toneOfVoice: tone })}
                               className={`py-3 px-2 rounded-xl text-sm font-bold border-2 transition-all ${formData.toneOfVoice === tone
-                                ? 'border-violet-500 bg-violet-50 text-violet-700'
-                                : 'border-slate-100 hover:border-slate-200 text-slate-500'
+                                  ? 'border-violet-500 bg-violet-50 text-violet-700'
+                                  : 'border-slate-100 hover:border-slate-200 text-slate-500'
                                 }`}
                             >
                               {tone}
@@ -590,8 +590,8 @@ export default function SettingsPage() {
                                     })
                                   }}
                                   className={`text-[10px] px-2 py-1 rounded-lg cursor-pointer border font-bold ${newProduct.certificates.includes(cert)
-                                    ? 'bg-blue-600 text-white border-blue-600'
-                                    : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+                                      ? 'bg-blue-600 text-white border-blue-600'
+                                      : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
                                     }`}
                                 >
                                   {cert}
@@ -891,21 +891,7 @@ export default function SettingsPage() {
                         <p className="text-xs text-slate-400">84% of your monthly capacity used. Consider upgrading.</p>
                       </div>
 
-                      <button
-                        onClick={async () => {
-                          try {
-                            const { data } = await paymentAPI.createPortalSession();
-                            if (data?.url) {
-                              window.location.href = data.url;
-                            } else {
-                              toast.error('Failed to open billing portal');
-                            }
-                          } catch (error: any) {
-                            toast.error(error.response?.data?.error || 'Failed to open billing portal');
-                          }
-                        }}
-                        className="px-6 py-3 bg-white text-slate-900 rounded-xl font-black hover:bg-slate-100 transition-colors shadow-lg"
-                      >
+                      <button className="px-6 py-3 bg-white text-slate-900 rounded-xl font-black hover:bg-slate-100 transition-colors shadow-lg">
                         Manage Subscription
                       </button>
                     </div>
