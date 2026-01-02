@@ -173,6 +173,10 @@ export const aiAPI = {
     time_difference: string;
     product: string;
   }) => api.post('/ai/generate-pitch', data),
+
+  // Alias for Settings page compatibility
+  searchHsCodes: (product: string) =>
+    api.post('/ai/hs-code-suggestions', { product }),
 }
 
 // Dashboard API (New)
