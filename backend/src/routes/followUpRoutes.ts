@@ -1,5 +1,5 @@
 import express, { Response } from 'express';
-import { auth, AuthRequest } from '../middleware/auth';
+import { authMiddleware as auth, AuthRequest } from '../middleware/auth';
 import { followUpService } from '../services/email/followUpService';
 
 const router = express.Router();

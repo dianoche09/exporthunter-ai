@@ -9,6 +9,16 @@ export interface ICampaign extends Document {
   status: 'draft' | 'scheduled' | 'active' | 'sending' | 'completed' | 'paused';
   scheduledAt?: Date;
   leads: mongoose.Types.ObjectId[];
+  steps?: {
+    order: number;
+    type: 'email' | 'linkedin_connect' | 'linkedin_message' | 'delay';
+    content?: { subject?: string; body: string };
+    delay?: { days: number; hours: number };
+  }[];
+  abTesting?: {
+    enabled: boolean;
+    variants?: { name: string; split: number; subject?: string; body: string }[];
+  };
   stats: {
     totalRecipients: number;
     sentCount: number;
@@ -44,6 +54,32 @@ const campaignSchema = new Schema<ICampaign>({
   },
   scheduledAt: { type: Date },
   leads: [{ type: Schema.Types.ObjectId, ref: 'Lead' }],
+
+  // Multi-step Sequence
+  steps: [{
+    order: { type: Number, required: true },
+    type: { type: String, enum: ['email', 'linkedin_connect', 'linkedin_message', 'delay'], required: true },
+    content: {
+      subject: String,
+      body: String
+    },
+    delay: {
+      days: { type: Number, default: 0 },
+      hours: { type: Number, default: 0 }
+    }
+  }],
+
+  // A/B Testing
+  abTesting: {
+    enabled: { type: Boolean, default: false },
+    variants: [{
+      name: String,
+      split: { type: Number, default: 50 }, // Percentage 0-100
+      subject: String,
+      body: String
+    }]
+  },
+
   stats: {
     totalRecipients: { type: Number, default: 0 },
     sentCount: { type: Number, default: 0 },

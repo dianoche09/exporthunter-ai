@@ -25,7 +25,7 @@ export const importLeads = async (req: AuthRequest, res: Response) => {
             skip_empty_lines: true,
             trim: true,
             relax_column_count: true
-        });
+        }) as any[];
 
         if (records.length === 0) {
             return res.status(400).json({

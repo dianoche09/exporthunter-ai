@@ -4,6 +4,11 @@ import { Lead } from '../models/Lead';
 import { Campaign } from '../models/Campaign';
 import { EmailActivity } from '../models/EmailActivity';
 
+/**
+ * @deprecated This endpoint is replaced by /api/dashboard/stats
+ * Scheduled for removal in v2.0 (Keep for 1 sprint for backward compatibility)
+ * Use dashboardController.getStats instead
+ */
 export const getDashboardStats = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user._id;

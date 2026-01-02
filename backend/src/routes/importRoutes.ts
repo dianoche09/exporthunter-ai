@@ -1,5 +1,5 @@
 import express from 'express';
-import { auth } from '../middleware/auth';
+import { authMiddleware } from '../middleware/auth';
 import { importLeads, exportLeads } from '../controllers/importController';
 
 const router = express.Router();
@@ -9,13 +9,13 @@ const router = express.Router();
  * @desc    Import leads from CSV
  * @access  Private
  */
-router.post('/leads', auth, importLeads);
+router.post('/leads', authMiddleware, importLeads);
 
 /**
  * @route   GET /api/import/leads/export
  * @desc    Export leads to CSV
  * @access  Private
  */
-router.get('/leads/export', auth, exportLeads);
+router.get('/leads/export', authMiddleware, exportLeads);
 
 export default router;

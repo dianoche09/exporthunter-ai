@@ -1,6 +1,6 @@
 {
   "name": "exporthunter-backend",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon --exec ts-node src/server.ts",
@@ -27,6 +27,7 @@
     "multer": "^2.0.2",
     "papaparse": "^5.5.3",
     "resend": "^3.0.0",
+    "stripe": "^20.1.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
