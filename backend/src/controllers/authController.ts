@@ -274,3 +274,55 @@ export const analyzeMarkets = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+export const refreshToken = async (req: AuthRequest, res: Response) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        error: 'Refresh token required'
+      });
+    }
+
+    // Verify refresh token
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as { userId: string };
+
+    // Get user
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid refresh token'
+      });
+    }
+
+    // Generate new access token
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET!,
+      { expiresIn: 3600 }
+    );
+
+    // Generate new refresh token
+    const newRefreshToken = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_REFRESH_SECRET!,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      success: true,
+      data: {
+        token,
+        refreshToken: newRefreshToken
+      }
+    });
+  } catch (error: any) {
+    res.status(401).json({
+      success: false,
+      error: 'Invalid or expired refresh token'
+    });
+  }
+};

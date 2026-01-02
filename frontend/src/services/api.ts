@@ -132,6 +132,8 @@ export const campaignsAPI = {
 
   pauseCampaign: (id: string) => api.post(`/campaigns/${id}/pause`),
 
+  resumeCampaign: (id: string) => api.post(`/campaigns/${id}/resume`),
+
   getCampaignStats: (id: string) => api.get(`/campaigns/${id}/stats`),
 
   generateSequence: (data: { product: string; target: string; count: number }) =>

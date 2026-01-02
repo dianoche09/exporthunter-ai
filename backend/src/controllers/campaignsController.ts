@@ -278,3 +278,84 @@ export const optimizeCampaign = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ success: false, error: error.message });
   }
 }
+
+export const getCampaign = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user._id;
+    const { id } = req.params;
+
+    const campaign = await Campaign.findOne({ _id: id, userId })
+      .populate('leads')
+      .lean();
+
+    if (!campaign) {
+      return res.status(404).json({
+        success: false,
+        error: 'Campaign not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: campaign
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+export const pauseCampaign = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user._id;
+    const { id } = req.params;
+
+    const campaign = await Campaign.findOneAndUpdate(
+      { _id: id, userId },
+      { status: 'paused' },
+      { new: true }
+    );
+
+    if (!campaign) {
+      return res.status(404).json({
+        success: false,
+        error: 'Campaign not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: campaign,
+      message: 'Campaign paused successfully'
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+export const resumeCampaign = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user._id;
+    const { id } = req.params;
+
+    const campaign = await Campaign.findOneAndUpdate(
+      { _id: id, userId },
+      { status: 'active' },
+      { new: true }
+    );
+
+    if (!campaign) {
+      return res.status(404).json({
+        success: false,
+        error: 'Campaign not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: campaign,
+      message: 'Campaign resumed successfully'
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
